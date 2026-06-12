@@ -10,7 +10,10 @@ window.addEventListener("load", () => {
     cancelButtonText: "No",
   }).then((result) => {
     if (result.isConfirmed) {
-      document.querySelector(".song").play();
+      const audio = document.querySelector(".song");
+      if (audio) {
+        audio.play().catch(err => console.log("Audio play blocked or failed:", err));
+      }
       animationTimeline();
     } else {
       animationTimeline();
@@ -63,13 +66,9 @@ document.addEventListener("DOMContentLoaded", function () {
 // animation timeline
 const animationTimeline = () => {
   const textBoxChars = document.getElementsByClassName("hbd-chatbox")[0];
-  const hbd = document.getElementsByClassName("wish-hbd")[0];
 
+  // Break chatbox message into individual characters for typing effect
   textBoxChars.innerHTML = `<span>${textBoxChars.innerHTML
-    .split("")
-    .join("</span><span>")}</span>`;
-
-  hbd.innerHTML = `<span>${hbd.innerHTML
     .split("")
     .join("</span><span>")}</span>`;
 
@@ -116,7 +115,7 @@ const animationTimeline = () => {
       opacity: 0,
     })
     .staggerTo(".hbd-chatbox span", 1.5, { visibility: "visible" }, 0.05)
-    .to(".fake-btn", 0.1, { backgroundColor: "rgb(127, 206, 248)" }, "+=4") // Original DM duration kept
+    .to(".fake-btn", 0.1, { backgroundColor: "rgb(127, 206, 248)" }, "+=4") // Original DM delay preserved
     .to(".four", 0.5, { scale: 0.2, opacity: 0, y: -150 }, "+=1")
     .from(".idea-1", 0.7, ideaTextTrans)
     .to(".idea-1", 0.7, ideaTextTransLeave, "+=2.5")
@@ -147,8 +146,18 @@ const animationTimeline = () => {
     .staggerFromTo(".baloons img", 2.5, { opacity: 0.9, y: 1400 }, { opacity: 1, y: -1000 }, 0.2)
     .from(".profile-picture", 0.5, { scale: 3.5, opacity: 0, x: 25, y: -25, rotationZ: -45 }, "-=2")
     .from(".hat", 0.5, { x: -100, y: 350, rotation: -180, opacity: 0 })
-    .staggerFromTo(".wish-hbd span", 0.7, { scale: 1.4, rotationY: 150 }, { scale: 1, rotationY: 0, color: "#ff69b4", ease: Expo.easeOut }, 0.1)
-    .from(".wish h5", 0.5, { opacity: 0, y: 10, skewX: "-15deg" }, "party")
+    // Perfectly stabilized clean "Happy Birthday!" text entry to eliminate overlapping or flipping bugs
+    .from(".wish-hbd", 0.8, {
+      opacity: 0,
+      y: -20,
+      scale: 0.5,
+      ease: Expo.easeOut
+    }, "party")
+    .from(".wish h5", 0.5, { 
+      opacity: 0, 
+      y: 10, 
+      skewX: "-15deg" 
+    }, "party")
     .staggerTo(".eight svg", 1.5, { visibility: "visible", opacity: 0, scale: 80, repeat: 3, repeatDelay: 1.4 }, 0.3)
     .to(".six", 0.5, { opacity: 0, y: 30, zIndex: "-1" })
     .staggerFrom(".nine p", 1, ideaTextTrans, 1.2)
@@ -159,3 +168,4 @@ const animationTimeline = () => {
     tl.restart();
   });
 };
+
